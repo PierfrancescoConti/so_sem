@@ -1,3 +1,8 @@
+vedi capitolo 5 silbershatz
+
+
+
+
 
 1. Semaphores in DisastrOS (4 people)
 
@@ -53,4 +58,3 @@ char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q);
 int FixedSizeMessageQueue_sizeMax(FixedSizeMessageQueue* q);
 
 int FixedSizeMessageQueue_size(FixedSizeMessageQueue* q);
-
