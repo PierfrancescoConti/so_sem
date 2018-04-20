@@ -7,5 +7,9 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semPost(){
-  // do stuff :)
+  //S->value++;
+//if (S->value <= 0) {
+//  remove a process P from S->list;
+//  wakeup(P);
+//}
 }

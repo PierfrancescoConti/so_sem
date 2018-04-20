@@ -32,4 +32,3 @@ void internal_semClose();
 void internal_semPost();
 
 void internal_semWait();
-
