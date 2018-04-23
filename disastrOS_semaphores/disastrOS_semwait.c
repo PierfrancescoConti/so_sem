@@ -14,7 +14,7 @@ void internal_semWait(Semaphore* sem){
   //}
   sem->count--;
   if (sem->count < 0) {
-    List_insert(sem->waiting_descriptors, sem->waiting_descriptors->last, running->descriptors->first);
+    List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, running->descriptors.first);
     internal_wait();
   }
 }
