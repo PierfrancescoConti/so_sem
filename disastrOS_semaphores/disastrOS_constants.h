@@ -28,6 +28,11 @@
 #define DSOS_ERESOURCENOFD -11
 #define DSOS_ERESOURCECLOSE -12
 #define DSOS_ERESOURCEINUSE -13
+// errori aggiuntivi
+#define DSOS_ESEMOPEN -14
+#define DSOS_ESEMCLOSE -15
+#define DSOS_ESEMWAIT -16
+#define DSOS_ESEMPOST -17
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
