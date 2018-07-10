@@ -18,7 +18,7 @@ void internal_semClose(){
     running->syscall_retvalue = DSOS_ESEMCLOSE;
     return;
   }
-  Lista_detach(&running->sem_descriptors, (ListItem*)sem_desc);
+  List_detach(&running->sem_descriptors, (ListItem*)sem_desc);
 
   Semaphore* sem= sem_desc->semaphore;  // il semaforo è un campo del suo descrittore
   if(!sem){
