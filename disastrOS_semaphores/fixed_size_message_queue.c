@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "fixed_size_message_queue.h"
+#include "disastrOS_semaphore.h"
 
 void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
 				int size_max){
