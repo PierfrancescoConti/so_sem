@@ -17,22 +17,26 @@ void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
 				    char* message){
   internal_semWait(&q->sem_empty);
   internal_semWait(&q->mutex);
+  //<CRITICAL>
   int tail_idx=(q->front_idx+q->size)%q->size_max;
   q->messages[tail_idx]=message;
   ++q->size;
+  //</CRITICAL>
   internal_semPost(&q->mutex);
   internal_semPost(&q->sem_full);
 }
 
 char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q){
   char* message_out=0;
-  sem_wait(&q->sem_full);
-  pthread_mutex_lock(&q->mutex);
+  internal_semWait(&q->sem_full);
+  internal_semWait(&q->mutex);
+  //<CRITICAL>
   message_out=q->messages[q->front_idx];
   q->front_idx=(q->front_idx+1)%q->size_max;
   --q->size;
-  pthread_mutex_unlock(&q->mutex);
-  sem_post(&q->sem_empty);
+  //</CRITICAL>
+  internal_semPost(&q->mutex);
+  internal_semPost(&q->sem_empty);
   return message_out;
 }
 
