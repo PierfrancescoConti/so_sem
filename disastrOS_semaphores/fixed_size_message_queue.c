@@ -53,7 +53,7 @@ void FixedSizeMessageQueue_destroy(FixedSizeMessageQueue* q){
   q->size=0;
   q->front_idx=0;
   q->size_max=0;
-  internal_semClose(&q->sem_full);          //va con l'indirizzo?
+  internal_semClose(&q->sem_full);          
   internal_semClose(&q->sem_empty);
   internal_semClose(&q->mutex);
 }

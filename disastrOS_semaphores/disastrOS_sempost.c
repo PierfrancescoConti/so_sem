@@ -33,7 +33,7 @@ void internal_semPost(){
 	  return;
   }
   
-  SemDescriptor* des_proc;
+  SemDescriptorPtr* des_proc;
   
   //Aggiorno il contatore del semaforo;
   //Se il count è <= 0:
@@ -41,11 +41,11 @@ void internal_semPost(){
   //Prendo il descrittore del semaforo che è in attesa e lo inserisco nella lista dei descrittori dei semafori
   //Elimino dalla lista di waiting il descrittore del processo e lo senno a running
   //setto il running->status a ready
-  (s->count)++
+  (s->count)++;
   if((s->count)<=0){
-	  List_insert(&ready_list, ready_list->last, (ListItem*) running);
-	  des_proc = (SemDescriptorPtr*) List_detach(&s->waiting_descriptors, (ListItem*) s->waiting_descriptors->first);
-      List_insert(&s->descriptors, s->descriptors->last, (ListItem*) des_proc);
+	  List_insert(&ready_list, ready_list.last, (ListItem*) running);
+	  des_proc = (SemDescriptorPtr*) List_detach(&s->waiting_descriptors, (ListItem*) s->waiting_descriptors.first);
+      List_insert(&s->descriptors, s->descriptors.last, (ListItem*) des_proc);
       List_detach(&waiting_list, (ListItem*) des_proc->descriptor->pcb);
       running->status = Ready;
       running = des_proc->descriptor->pcb;
