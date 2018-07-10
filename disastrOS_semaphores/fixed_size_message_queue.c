@@ -8,9 +8,9 @@ void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
   q->size = 0;
   q->front_idx = 0;
   q->size_max = size_max;
-  internal_semOpen(q->sem_full, 0);                 //va bene utilizzare un semaforo con lo stesso nome?
-  internal_semOpen(q->sem_empty, q -> size_max); 
-  internal_semOpen(q->mutex, 1);
+  internal_semOpen(&q->sem_full, 0);                 //va bene utilizzare un semaforo con lo stesso nome?
+  internal_semOpen(&q->sem_empty, q -> size_max); 
+  internal_semOpen(&q->mutex, 1);
 }
 
 void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
