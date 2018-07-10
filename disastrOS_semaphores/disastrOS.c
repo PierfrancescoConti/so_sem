@@ -82,9 +82,6 @@ void setupSignals(void) {
   if (setitimer(ITIMER_REAL, &it, NULL) ) perror("setitiimer");
 }
 
-
-
-
 int disastrOS_syscall(int syscall_num, ...) {
   assert(running);
   va_list ap;
@@ -190,7 +187,7 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   syscall_numarg[DSOS_CALL_SEMCLOSE]      = 1;
 
   syscall_vector[DSOS_CALL_SEMPOST]      = internal_semPost;
-  syscall_numarg[DSOS_CALL_SEMPOST]      = 2;
+  syscall_numarg[DSOS_CALL_SEMPOST]      = 1;
 
   syscall_vector[DSOS_CALL_SEMWAIT]      = internal_semWait;
   syscall_numarg[DSOS_CALL_SEMWAIT]      = 1;

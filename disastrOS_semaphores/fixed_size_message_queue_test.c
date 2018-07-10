@@ -29,7 +29,7 @@ void* producerFn(void* args_){
     strcpy(msg, buf);
 
     printf("INFO, PRODUCER  %d sending [%s] \n", args->id,msg);
-    
+
     FixedSizeMessageQueue_pushBack(args->queue, msg);
     sleep(args->sleep_time);
   }
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   int num_consumers=10;
   pthread_t producers[num_producers];
   ThreadArgs producers_args[num_producers];
-			    
+
   pthread_t consumers[num_consumers];
   ThreadArgs consumers_args[num_consumers];
   for (int i=0; i<num_producers; i++){
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
       exit(0);
     }
   }
-  
+
   while(num_consumers_alive && num_producers_alive) {
     sleep(1);
   }
