@@ -305,6 +305,26 @@ int disastrOS_destroyResource(int resource_id) {
   return disastrOS_syscall(DSOS_CALL_DESTROY_RESOURCE, resource_id);
 }
 
+// Le mie syscalls:
+int disastrOS_semopen(int resource_id, int count){
+    return disastrOS_syscall(DSOS_CALL_SEMOPEN, resource_id, count);
+}
+
+int disastrOS_semclose(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMCLOSE, resource_id);
+}
+
+int disastrOS_semwait(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMWAIT, resource_id);
+}
+
+int disastrOS_sempost(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMPOST, resource_id);
+}
+
+
+
+
 
 
 void disastrOS_printStatus(){
