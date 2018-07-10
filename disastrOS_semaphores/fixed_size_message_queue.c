@@ -14,13 +14,13 @@ void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
 
 void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
 				    char* message){
-  sem_wait(&q->sem_empty);
-  pthread_mutex_lock(&q->mutex);
+  internal_semWait(&q->sem_empty);
+  internal_semWait(&q->mutex);
   int tail_idx=(q->front_idx+q->size)%q->size_max;
   q->messages[tail_idx]=message;
   ++q->size;
-  pthread_mutex_unlock(&q->mutex);
-  sem_post(&q->sem_full);
+  internal_semPost(&q->mutex);
+  internal_semPost(&q->sem_full);
 }
 
 char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q){
@@ -48,7 +48,7 @@ void FixedSizeMessageQueue_destroy(FixedSizeMessageQueue* q){
   q->size=0;
   q->front_idx=0;
   q->size_max=0;
-  sem_destroy(&q->sem_full);
-  sem_destroy(&q->sem_empty);
-  pthread_mutex_destroy(&q->mutex);
+  internal_semClose(&q->sem_full);          //va con l'indirizzo?
+  internal_semClose(&q->sem_empty);
+  internal_semClose(&q->mutex);
 }
