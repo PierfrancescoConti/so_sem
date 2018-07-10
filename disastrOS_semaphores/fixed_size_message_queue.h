@@ -7,9 +7,9 @@ typedef struct FixedSizeMessageQueue{
   int size;
   int size_max;
   int front_idx;
-  sem_t sem_full;
-  sem_t sem_empty;
-  pthread_mutex_t mutex;
+  int sem_full;           //campo fd del SemDescriptor
+  int sem_empty;
+  int mutex;
 } FixedSizeMessageQueue;
 
 void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
