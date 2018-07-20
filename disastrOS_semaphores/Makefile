@@ -2,8 +2,21 @@ CC=gcc
 CCOPTS=--std=gnu99 -Wall 
 AR=ar
 
-OBJS=fixed_size_message_queue.o\
-	 pool_allocator.o\
+HEADERS=disastrOS.h\
+	disastrOS_constants.h\
+	disastrOS_descriptor.h\
+	disastrOS_globals.h\
+	disastrOS_pcb.h\
+	disastrOS_resource.h\
+	disastrOS_syscalls.h\
+	disastrOS_timer.h\
+	disastrOS_semaphore.h\
+	disastrOS_semdescriptor.h\
+	linked_list.h\
+	pool_allocator.h\
+	fixed_size_message_queue.h\
+
+OBJS=pool_allocator.o\
      linked_list.o\
      disastrOS_timer.o\
      disastrOS_pcb.o\
@@ -27,38 +40,28 @@ OBJS=fixed_size_message_queue.o\
      disastrOS_semclose.o\
      disastrOS_semwait.o\
      disastrOS_sempost.o\
+	 fixed_size_message_queue.o\
 
-LIBS=-lpthread
+LIBS=libdisastrOS.a
 
-HEADERS=fixed_size_message_queue.h\
-	disastrOS.h\
-	disastrOS_constants.h\
-	disastrOS_descriptor.h\
-	disastrOS_globals.h\
-	disastrOS_pcb.h\
-	disastrOS_resource.h\
-	disastrOS_syscalls.h\
-	disastrOS_timer.h\
-	disastrOS_semaphore.h\
-	disastrOS_semdescriptor.h\
-	linked_list.h\
-	pool_allocator.h\
-
-BINS=fixed_size_message_queue_test
+BINS=disastrOS_test
 
 #disastros_test
 
 .phony: clean all
 
 
-all:	$(BINS)
+all:	$(LIBS) $(BINS)
 
 %.o:	%.c $(HEADERS)
 	$(CC) $(CCOPTS) -c -o $@  $<
 
+libdisastrOS.a: $(OBJS) $(HEADERS) 
+	$(AR) -rcs $@ $^
+	$(RM) $(OBJS)
 
-fixed_size_message_queue_test:	fixed_size_message_queue_test.c $(OBJS) $(LIBS)
+disastrOS_test:		disastrOS_test.c $(LIBS)
 	$(CC) $(CCOPTS) -o $@ $^
 
 clean:
-	rm -rf *.o *~  $(BINS)
+	rm -rf *.o *~ $(LIBS) $(BINS)

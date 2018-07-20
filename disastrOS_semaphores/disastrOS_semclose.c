@@ -35,11 +35,14 @@ void internal_semClose(){
   }
 
   int ret;
-  ret = Semaphore_free(sem);
-  if(ret<0){
-    perror("Errore nella deallocazione Semaphore... ritenta");
-    running->syscall_retvalue = DSOS_ESEMCLOSE;
-    return;
+  if (sem->descriptors.size == 0 && sem->waiting_descriptors.size == 0) {
+    List_detach(&semaphores_list,(ListItem*)sem);
+    ret = Semaphore_free(sem);              //Chiusura sem
+    if(ret<0){
+      perror("Errore nella deallocazione Semaphore... ritenta");
+      running->syscall_retvalue = DSOS_ESEMCLOSE;
+      return;
+    }
   }
   ret = SemDescriptor_free(sem_desc);
   if(ret<0){
@@ -53,5 +56,6 @@ void internal_semClose(){
     running->syscall_retvalue = DSOS_ESEMCLOSE;
     return;
   }
-
+  running->syscall_retvalue = 0;
+  return;
 }
