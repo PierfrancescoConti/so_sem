@@ -22,7 +22,7 @@ void producer_routine(int prod_sem, int cons_sem){
     disastrOS_semwait(prod_sem);
     //<CRITICAL>
 
-    printf("~~Elemento PPRODOTTO~~");
+    printf("~~Elemento PPRODOTTO~~\n");
 
     //</CRITICAL>
     disastrOS_sempost(cons_sem);
@@ -56,7 +56,7 @@ int prod_sem = disastrOS_semopen(1,2);  //id → apertura del semaforo dei produ
 
 int cons_sem = disastrOS_semopen(2,0);  //id → aprtura del semaforo dei consumatori
 
-  printf("~~~~~~Aspetta...~~~~~~~\n");
+  printf("~~~~~~Aspetta...~~~~~~~\n\n");
  disastrOS_sleep(20);
 
 
@@ -73,7 +73,6 @@ int cons_sem = disastrOS_semopen(2,0);  //id → aprtura del semaforo dei consum
 
 
 ////////////////////////////
-  printf("PID: %d, terminating\n", disastrOS_getpid());
 
 //  for (int i=0; i<(disastrOS_getpid()+1); ++i){
 //    printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
@@ -93,9 +92,9 @@ void initFunction(void* args) {
   disastrOS_spawn(sleeperFunction, 0);
 
 
-  printf("I feel like to spawn 10 nice threads\n");
+  printf("I feel like to spawn 3 nice threads\n");
   int alive_children=0;
-  for (int i=0; i<10; ++i) {
+  for (int i=0; i<3; ++i) {
     int type=0;
     int mode=DSOS_CREATE;
     printf("mode: %d\n", mode);
@@ -114,6 +113,7 @@ void initFunction(void* args) {
     printf("initFunction, child: %d terminated, retval:%d, alive: %d \n", pid, retval, alive_children);
     --alive_children;
   }
+  disastrOS_printStatus();  ///
   printf("shutdown!");
   disastrOS_shutdown();
 }
