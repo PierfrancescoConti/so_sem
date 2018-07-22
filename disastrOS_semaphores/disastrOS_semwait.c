@@ -7,26 +7,23 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semWait(){
-  //S->value--;
-  //if (S->value < 0) {
-  //    add this process to S->list ;
-  //    block();
-  //}
-  //sem->count--;
-  //if (sem->count < 0) {
-    //List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, running->descriptors.first);
-    //internal_wait();
-  //}
+  
   int id=running->syscall_args[0];		//prendo l'id del semaforo in esecuzione
   
-  ListHead sem_proc=running->sem_descriptors;		//puntatore al semaforo associato al processo in esecuzione
-  SemDescriptor* descr_sem=SemDescriptorList_byFd(&sem_proc,id);		//decsrittore del semaforo contenuto nella lista dei descrittori
-																	//associati ai processi
+  SemDescriptor* descr_sem = SemDescriptorList_byFd(&running->sem_descriptors, id);
+
   
   if(!descr_sem){
 	  running->syscall_retvalue=-1;
 	  return;
   }
+  
+  SemDescriptorPtr* descptr = descr_sem->ptr;
+
+    if (!descptr) {
+        running->syscall_retvalue = -1;
+        return;
+    }
   
   Semaphore* s=descr_sem->semaphore;
   
@@ -34,18 +31,26 @@ void internal_semWait(){
 	  running->syscall_retvalue=-1;
 	  return;
   }
-  
-  (s->count)--;
-  if((s->count)<=0){ 	//il processo in esecuzione deve entrare in coda di waiting
-	
-	List_insert(&s->waiting_descriptors, s->waiting_descriptors.last, (ListItem*)descr_sem->ptr);
+  //decremento il semaforo, se il contatore del semaforo è minore di 0:
+  //rimuovo il descptr dalla lista dei semafori
+  //inserisco il processo chiamato nella lista dei rpocessi in waiting
+  // inserisco il semaforo nella lista dei semafori di waiting
+  // modifico lo stato in waiting
+  //prendo il primo processo in ready e lo inserisco nello stato di running
+    PCB* p;
+    s->count=(s->count-1);
 
-    running->status = Waiting;
-    List_insert(&waiting_list, waiting_list.last, (ListItem *)running);
+    if(s->count < 0){
+        List_detach(&s->descriptors, (ListItem*) descptr);
+        List_insert(&s->waiting_descriptors, s->waiting_descriptors.last, (ListItem*) descr_sem->ptr);
+        //sem->count=0;
+        List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
+        running->status = Waiting;
+        p = (PCB*) List_detach(&ready_list, (ListItem*) ready_list.first);
+        running = (PCB*)p;
+    }
 
-    running = (ready_list.first)?(PCB*) List_detach(&ready_list, ready_list.first):0;
-  }
-  
-  running->syscall_retvalue=0;
-  return;
+    /* e' andato tutto bene, quindi ritorno 0 */
+    running->syscall_retvalue=0;
+    return;
 }
