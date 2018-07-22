@@ -4,7 +4,7 @@
 
 #include "disastrOS.h"
 
-#define ITERATIONS 5
+#define ITERATIONS 10
 
 
 // we need this to handle the sleep state
@@ -22,7 +22,7 @@ void producer_routine(int prod_sem, int cons_sem){
     disastrOS_semwait(prod_sem);
     //<CRITICAL>
 
-    printf("~~Elemento PPRODOTTO~~\n");
+    printf("~~Elemento PRODOTTO~~\n");
 
     //</CRITICAL>
     disastrOS_sempost(cons_sem);
@@ -52,20 +52,32 @@ void childFunction(void* args){
 
 ////////////////////// TEST ///////////////////////
 printf("~~~~~~~Apertura dei due semafori (Prod & Cons)~~~~~~~~~~\n");
-int prod_sem = disastrOS_semopen(1,2);  //id → apertura del semaforo dei produttori
+int prod_sem = disastrOS_semopen(1,4);  //id → apertura del semaforo dei produttori
 
 int cons_sem = disastrOS_semopen(2,0);  //id → aprtura del semaforo dei consumatori
 
   printf("~~~~~~Aspetta...~~~~~~~\n\n");
  disastrOS_sleep(20);
+ printf("PID: %d, starting\n", disastrOS_getpid()); // inizio processi
 
 
- if (disastrOS_getpid() == 3) {
-     printf("~~~~~~~Start!~~~~~~~~~\n");
+ if (disastrOS_getpid() == 2) {           // per spiegare
+     printf("\n~~~~~~~~~~~~~~~Start!~~~~~~~~~~~~~~~\n");
+     printf("~~~~~~I processi 3 e 5 saranno Produttori~~~~~~~~\n");
+     printf("~~~~~~I processi 4 e 6 saranno Consumatori~~~~~~~~\n\n");
+  }
+
+ if (disastrOS_getpid() == 3) {           //PRODUTTORE
      producer_routine(prod_sem, cons_sem);
  }
 
- if (disastrOS_getpid() == 4){
+ if (disastrOS_getpid() == 4){             //CONSUMATORE
+     consumer_routine(prod_sem, cons_sem);
+ }
+ if (disastrOS_getpid() == 5){          //PRODUTTORE
+     producer_routine(prod_sem, cons_sem);
+ }
+ if (disastrOS_getpid() == 6){            //CONSUMATORE
      consumer_routine(prod_sem, cons_sem);
  }
  printf("PID: %d, terminating\n", disastrOS_getpid());
@@ -92,9 +104,9 @@ void initFunction(void* args) {
   disastrOS_spawn(sleeperFunction, 0);
 
 
-  printf("I feel like to spawn 3 nice threads\n");
+  printf("I feel like to spawn 5 nice threads\n");    //// Più leggibile....
   int alive_children=0;
-  for (int i=0; i<3; ++i) {
+  for (int i=0; i<5; ++i) {
     int type=0;
     int mode=DSOS_CREATE;
     printf("mode: %d\n", mode);
