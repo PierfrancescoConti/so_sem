@@ -126,7 +126,7 @@ void initFunction(void* args) {
     --alive_children;
   }
   disastrOS_printStatus();  ///
-  printf("shutdown!");
+  printf("shutdown!\n");
   disastrOS_shutdown();
 }
 

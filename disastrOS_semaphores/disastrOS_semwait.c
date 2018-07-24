@@ -7,28 +7,30 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semWait(){
-  
+
   int id=running->syscall_args[0];		//prendo l'id del semaforo in esecuzione
-  
+
   SemDescriptor* descr_sem = SemDescriptorList_byFd(&running->sem_descriptors, id);
 
-  
+
   if(!descr_sem){
 	  running->syscall_retvalue=-1;
 	  return;
   }
-  
+
   SemDescriptorPtr* descptr = descr_sem->ptr;
 
     if (!descptr) {
         running->syscall_retvalue = -1;
+
         return;
     }
-  
+
   Semaphore* s=descr_sem->semaphore;
-  
+
   if(!s){
 	  running->syscall_retvalue=-1;
+
 	  return;
   }
   //decremento il semaforo, se il contatore del semaforo è minore di 0:

@@ -14,11 +14,11 @@ void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
   q->size = 0;
   q->front_idx = 0;
   q->size_max = size_max;
-  
+
   srand(time(NULL));   // should only be called once
   int f = rand() % 20000;
   int e = f +2;
-  
+
   disastrOS_semopen(f, 0);                 //va bene utilizzare un semaforo con lo stesso nome?
   disastrOS_semopen(e, q -> size_max);
   //~ disastrOS_semopen(q->mutex, 1);					 // 0/1?
@@ -37,7 +37,7 @@ void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
   q->messages[tail_idx]=message;
   ++q->size;
   //</CRITICAL>
-  
+
   //~ disastrOS_sempost(q->mutex);
   pthread_mutex_unlock(&q->mutex);
 
@@ -55,7 +55,7 @@ char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q){
   q->front_idx=(q->front_idx+1)%q->size_max;
   --q->size;
   //</CRITICAL>
-  
+
   //~ disastrOS_sempost(q->mutex);
   pthread_mutex_unlock(&q->mutex);
 

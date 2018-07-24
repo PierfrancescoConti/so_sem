@@ -6,25 +6,25 @@
 #include "disastrOS_semaphore.h"
 #include "disastrOS_semdescriptor.h"
 
-void internal_semPost(){  
+void internal_semPost(){
   int id=running->syscall_args[0];
-  
+
   //Se non trovo il descrittore del semaforo ritorno il valore -1 ed esco
   SemDescriptor* des_sem=SemDescriptorList_byFd(&running->sem_descriptors,id);
   if(!des_sem){
-	  running->syscall_retvalue=-1;
+	  running->syscall_retvalue=DSOS_ESEMPOST;
 	  return;
   }
-  
+
   //se non trovo il semaforo ritorno -1, cioè errore
   Semaphore* s=des_sem->semaphore;
   if(!s){
-	  running->syscall_retvalue=-1;
+	  running->syscall_retvalue=DSOS_ESEMPOST;
 	  return;
   }
-  
+
   SemDescriptorPtr* des_proc;
-  
+
   //Aggiorno il contatore del semaforo;
   //Se il count è <= 0:
   //Inserisco nella lista dei ready uno dei processi che erano in running

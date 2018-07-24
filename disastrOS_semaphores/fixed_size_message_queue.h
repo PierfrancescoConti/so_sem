@@ -11,8 +11,9 @@ typedef struct FixedSizeMessageQueue{
   int sem_empty;
   //~ int mutex;
   pthread_mutex_t mutex;
-  
+
 } FixedSizeMessageQueue;
+
 
 void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
 				int size_max);
