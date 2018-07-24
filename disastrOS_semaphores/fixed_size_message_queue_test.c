@@ -31,7 +31,6 @@ void sleeperFunction(void* args){
 }
 	//~ ThreadArgs producer_args_template = {0, 0, 1, 10, &mq};
 
-///////////////////PRODUTTORE e CONSUMATORE//////////////
 void* producerFn(void* args_){
 	++num_producers_alive;
 	ThreadArgs* args=(ThreadArgs*)args_;
@@ -75,8 +74,8 @@ void initFunction(void* args) {
 	FixedSizeMessageQueue mq;
 	int queue_size=10;
 	FixedSizeMessageQueue_init(&mq, queue_size);
-	ThreadArgs producer_args_template = {0, 0, 1, 1, &mq};
-	ThreadArgs consumer_args_template = {1, 0, 2, 1, &mq};
+	ThreadArgs producer_args_template = {0, 0, 1, 5, &mq};
+	ThreadArgs consumer_args_template = {1, 0, 2, 5, &mq};
 
 	int num_producers=10;
 	int num_consumers=10;
@@ -85,32 +84,48 @@ void initFunction(void* args) {
 
 	pthread_t consumers[num_consumers];
 	ThreadArgs consumers_args[num_consumers];
+	
+	
+	int t1, t2;
+	
 	for (int i=0; i<num_producers; i++){
+		//~ sleep(1);
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		producers_args[i]=producer_args_template;
 		producers_args[i].id=i;
-		if (pthread_create(producers+i, &attr, producerFn, (void*) &producers_args[i])){
+		t1 = pthread_create(producers+i, &attr, producerFn, (void*) &producers_args[i]);
+		if (t1){
 			printf("create error\n");
 			exit(0);
 		}
+		//~ pthread_join(t1, NULL);
+		//~ pthread_attr_destroy(&attr);
+
 	}
 		
-	disastrOS_printStatus();
+	//~ disastrOS_printStatus();
+	 //~ disastrOS_sleep(20);
+
 
 	for (int i=0; i<num_consumers; i++){
+		//~ sleep(1);
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		consumers_args[i]=consumer_args_template;
 		consumers_args[i].id=i;
 		printf("id: %d\n", consumers_args[i].id);
-		if (pthread_create(consumers+i, &attr, consumerFn, (void*) &consumers_args[i])){
+		
+		t2 = pthread_create(consumers+i, &attr, consumerFn, (void*) &consumers_args[i]);
+		if (t2){
 			printf("create error\n");
 			exit(0);
 		}
+		//~ pthread_join(t2, NULL);
+		//~ pthread_attr_destroy(&attr);
 	}
 	disastrOS_printStatus();
-
+	
 	while(num_consumers_alive && num_producers_alive) {
 		sleep(1);
 	}
@@ -119,7 +134,12 @@ void initFunction(void* args) {
 	if (! num_producers_alive)
 		printf("all producers died\n");
 	printf("exiting and terminating all threads\n");
-	exit(0);
+	
+	disastrOS_printStatus();  ///
+	printf("shutdown!");
+	disastrOS_shutdown();
+
+	//~ exit(0);
 }
 
 int main(int argc, char** argv){
