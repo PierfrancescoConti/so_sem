@@ -36,7 +36,7 @@ void* producerFn(void* args_){
 	ThreadArgs* args=(ThreadArgs*)args_;
 	printf("INFO, PRODUCER %d START\n", args->id);
 	for (int i=0; i<args->cycles; ++i) {
-		char buf[1024];
+		char buf[512];
 		sprintf(buf, "msg from %d, cycle: %d", args->id,i);
 		int length=strlen(buf);
 		char* msg=(char*)malloc(length);
