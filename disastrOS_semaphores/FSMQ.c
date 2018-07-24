@@ -19,15 +19,12 @@ void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
 
 
 
-  //~ disastrOS_semopen(q->mutex, 1);					 // 0/1?
-  pthread_mutex_init(&q->mutex, NULL);
 
 }
 
 void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
 				    char* message){
-  //~ disastrOS_semwait(q->mutex);
-  pthread_mutex_lock(&q->mutex);
+
 
   //<CRITICAL>
   int tail_idx=(q->front_idx+q->size)%q->size_max;
@@ -35,15 +32,12 @@ void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
   ++q->size;
   //</CRITICAL>
 
-  //~ disastrOS_sempost(q->mutex);
-  pthread_mutex_unlock(&q->mutex);
+
 
 }
 
 char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q){
   char* message_out=0;
-  //~ disastrOS_semwait(q->mutex);
-  pthread_mutex_lock(&q->mutex);
 
   //<CRITICAL>
   message_out=q->messages[q->front_idx];
@@ -51,8 +45,6 @@ char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q){
   --q->size;
   //</CRITICAL>
 
-  //~ disastrOS_sempost(q->mutex);
-  pthread_mutex_unlock(&q->mutex);
 
   return message_out;
 }
@@ -62,7 +54,7 @@ int FixedSizeMessageQueue_sizeMax(FixedSizeMessageQueue* q) {
 }
 
 int FixedSizeMessageQueue_size(FixedSizeMessageQueue* q){
-  return q->size; // critical section??
+  return q->size; 
 }
 
 void FixedSizeMessageQueue_destroy(FixedSizeMessageQueue* q){
@@ -70,7 +62,5 @@ void FixedSizeMessageQueue_destroy(FixedSizeMessageQueue* q){
   q->size=0;
   q->front_idx=0;
   q->size_max=0;
-  //~ disastrOS_semclose(q->mutex);
-  pthread_mutex_destroy(&q->mutex);
 
 }
