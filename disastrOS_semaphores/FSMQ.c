@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "fixed_size_message_queue.h"
 #include "disastrOS_semaphore.h"
 #include "disastrOS.h"
 //prova
