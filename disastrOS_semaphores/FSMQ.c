@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "disastrOS_semaphore.h"
 #include "disastrOS.h"
 #include "FSMQ.h"
