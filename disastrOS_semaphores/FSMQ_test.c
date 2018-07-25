@@ -43,7 +43,7 @@ void producer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQue
   }
 }
 
-  void consumer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQueue* mq, int id){
+void consumer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQueue* mq, int id){
     for(int i=0; i<ITERATIONS; i++){
       disastrOS_semwait(cons_sem);
       disastrOS_semwait(mutex);
