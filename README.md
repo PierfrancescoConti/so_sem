@@ -1,60 +1,43 @@
-vedi capitolo 5 silbershatz
+# SO_SEM Project
 
+Progetto universitario per l'esame di Sistemi Operativi con lo scopo di:
 
+    Implementare una struttura elementare per la gestione di semafori    
+    tramite operazioni di: inizializzazione, incremento e decremento.
+    Inoltre viene proposta un implementazione di una Fixed Size Message Queue,
+    con particolare enfasi alle operazioni di pop e push.
 
+## Prerequisiti
 
+L'applicazione richiede la struttura base di DisastrOS.
+Una volta clonata la repo github in una directory bisognerà:
 
-1. Semaphores in DisastrOS (4 people)
+    Entrare nella cartella so_sem e in base al test che si vuole effettuare cambiare
+    il makefile attualmente in uso.
 
-   implement the following system calls in DisastrOS
-   // creates a semaphore in the system, having num semnum
-   // the semaphore is accessible throughuot the entire system
-   // by its id.
-   // on success, the function call returns semnum (>=0);
-   // in failure the function returns an error code <0
-   - int s=DisastrOS_semOpen(int semnum)
+## Esecuzione
+$ make (per il relativo makefile)
 
-   //releases from an application the given
-   // returns 0 on success
-   // returns an error code if the semaphore is not owned by the application
-   - int DisastrOS_semClose(int semnum)
+$ ./disastrOS_test per il test dei semafori 
 
-   //decrements the given semaphore
-   //if the semaphore is 0, the caller is put onto wait
-   //returns an error code
-   - int DisastrOS_semWait(int semnum);
+$ ./FSMQ_test      per il test delle FSMQ
 
-   //increments the given semaphore
-   //if the semaphore was at 0, and some other thread was waiting
-   //the thread is resumed
-   //returns 0 on success, an error code on failure
-   int DisastrOS_semPost(int semnum);
+## Come Funziona
+### Semaforo
+Un semaforo è una struttura costituita da una variabile intera che può
+essere manipolata soltanto attraverso le operazioni di wait e post; esse
+rispettivamente decrementano e incrementano il contatore all'interno del
+semaforo. Ovviamente, l'implementazione del semaforo è tale per cui
+solo una operazione per volta può essere effettuata.
+E' bene notare che un semaforo binario (solo 0 e 1 ammessi dal
+contatore) costituisce effettivamente un mutex e può essere utilizzato
+come tale se il sistema non fornisce quest'ultimi. Comunque, in generale,
+un semaforo può spaziare in un definito range di valori. Essi sono quindi
+utilizzati per regolare l'accesso a delle risorse (wait per richedere
+una risorsa e signal quando rilasciata/creata) o per sincronizzare processi.
 
-
-Inoltre il professore ci ha detto di implementare anche una nuova struttura con le relative funzioni:
-
-
-typedef struct FixedSizeMessageQueue{
-  char** messages;
-  int size;
-  int size_max;
-  int front_idx;
-  sem_t sem_full;
-  sem_t sem_empty;
-  pthread_mutex_t mutex;
-
-} FixedSizeMessageQueue;
-
-void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
-                int size_max);
-
-void FixedSizeMessageQueue_destroy(FixedSizeMessageQueue* q);
-
-void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
-                    char* message);
-
-char* FixedSizeMessageQueue_popFront(FixedSizeMessageQueue*q);
-
-int FixedSizeMessageQueue_sizeMax(FixedSizeMessageQueue* q);
-
-int FixedSizeMessageQueue_size(FixedSizeMessageQueue* q);
+### Fixed Size Message Queue
+Una coda di messaggi a dimensione fissa è una struttura dati che, tramite l'utilizzo
+di semafori generici, garantisce lo scambio la sincronizzazione e mutua esclusione per
+lo scambio di messaggi tra processi.
+la sincronizzazione viene garantita nella fase di pushBack e popFront.
