@@ -12,7 +12,6 @@ void internal_semPost(){
   //Se non trovo il descrittore del semaforo ritorno il valore di errore ed esco
   SemDescriptor* des_sem=SemDescriptorList_byFd(&running->sem_descriptors,id);
   if(!des_sem){
-    perror("Non trovo il descrittore del semaforo (semWait)");
 	  running->syscall_retvalue=DSOS_ESEMPOST;
 	  return;
   }
@@ -20,7 +19,6 @@ void internal_semPost(){
   //se non trovo il semaforo ritorno errore
   Semaphore* s=des_sem->semaphore;
   if(!s){
-    perror("Non trovo il semaforo (semWait)");
 	  running->syscall_retvalue=DSOS_ESEMPOST;
 	  return;
   }

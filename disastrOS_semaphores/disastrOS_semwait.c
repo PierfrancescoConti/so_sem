@@ -14,7 +14,6 @@ void internal_semWait(){
 
 
   if(!descr_sem){
-    perror("Non trovo il descrittore (semWait)");
 	  running->syscall_retvalue = DSOS_ESEMWAIT;
 	  return;
   }
@@ -22,7 +21,6 @@ void internal_semWait(){
   SemDescriptorPtr* descptr = descr_sem->ptr;
 
     if (!descptr) {
-      perror("Non trovo il descptr (semWait)");
       running->syscall_retvalue = DSOS_ESEMWAIT;
       return;
     }
@@ -30,7 +28,6 @@ void internal_semWait(){
   Semaphore* s=descr_sem->semaphore;
 
   if(!s){
-    perror("Non trovo il semaforo (semWait)");
 	  running->syscall_retvalue = DSOS_ESEMWAIT;
 
 	  return;

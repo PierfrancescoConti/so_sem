@@ -16,7 +16,6 @@ void internal_semOpen(){
   int id = running->syscall_args[0];      // parametri che servono
   int count = running->syscall_args[1];   // per allocare il sem
   if(count<0 || id<0){
-    perror("Errore nella semopen");
     running->syscall_retvalue = DSOS_ESEMOPEN;
     return;
   }
@@ -24,7 +23,6 @@ void internal_semOpen(){
   if(sem==NULL){                          // se non è già allocato
     sem=Semaphore_alloc(id, count);       // lo allochiamo
     if (!sem) {                           // se non è allocato correttamente -> ERRORE
-      perror("Errore allocazione Semaforo");
       running->syscall_retvalue = DSOS_ESEMOPEN;
       return;
     }
@@ -33,7 +31,6 @@ void internal_semOpen(){
 
   SemDescriptor* sd = SemDescriptor_alloc(running->last_sem_fd, sem, running); // ora allochiamo il descrittore del sem
   if (!sd) {
-    perror("Errore allocazione Descrittore");
     running->syscall_retvalue = DSOS_ESEMOPEN;
     return;
   }
@@ -43,7 +40,6 @@ void internal_semOpen(){
   SemDescriptorPtr* sdptr = SemDescriptorPtr_alloc(sd); // già visto, già vissuto...
   if (!sdptr) {
       running->syscall_retvalue = DSOS_ESEMOPEN;
-      perror("Errore allocazione DescrittorePtr");
       return;
   }
   sd->ptr = sdptr;

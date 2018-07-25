@@ -22,11 +22,7 @@ void sleeperFunction(void* args){
 }
 
 ///////////////////PRODUTTORE e CONSUMATORE//////////////
-void producer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQueue* mq, int id){
-  for(int i=0; i<ITERATIONS; i++){
-    disastrOS_semwait(prod_sem);
-    disastrOS_semwait(mutex);
-    //<CRITICAL>
+void producer_routine(FixedSizeMessageQueue* mq, int id, int i){
 
 		char buf[512];
 		sprintf(buf, "msg from %d, cycle: %d",id, i);
@@ -36,26 +32,15 @@ void producer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQue
 
 		printf("INFO, PRODUCER  %d sending [%s] \n",id,msg);
 		FixedSizeMessageQueue_pushBack(mq, msg);
+    sleep(1);
 
-    //</CRITICAL>
-    disastrOS_sempost(mutex);
-    disastrOS_sempost(cons_sem);
-  }
 }
 
-void consumer_routine(int prod_sem, int cons_sem, int mutex, FixedSizeMessageQueue* mq, int id){
-    for(int i=0; i<ITERATIONS; i++){
-      disastrOS_semwait(cons_sem);
-      disastrOS_semwait(mutex);
-      //<CRITICAL>
+void consumer_routine(FixedSizeMessageQueue* mq, int id, int i){
 
       char* msg=FixedSizeMessageQueue_popFront(mq);
 			printf("INFO, CONSUMER  %d receiving [%s] \n", id,msg);
-
-      //</CRITICAL>
-      disastrOS_sempost(mutex);
-      disastrOS_sempost(prod_sem);
-    }
+      sleep(2);
 }
 
 
@@ -72,13 +57,6 @@ void childFunction(void* args){
 
 
 
-printf("~~~~~~~Apertura dei due semafori (Prod, Cons & Mutex)~~~~~~~~~~\n");
-int prod_sem = disastrOS_semopen(1,4);  //id → apertura del semaforo dei produttori
-
-int cons_sem = disastrOS_semopen(2,0);  //id → apetura del semaforo dei consumatori
-
-int mutex = disastrOS_semopen(3,1);  //per garantire la mutua esclusione
-
 
 
   printf("~~~~~~Aspetta...~~~~~~~\n\n");
@@ -86,27 +64,29 @@ int mutex = disastrOS_semopen(3,1);  //per garantire la mutua esclusione
  printf("PID: %d, starting\n", disastrOS_getpid()); // inizio processi
 
 
- if (disastrOS_getpid() == 2) {           // per spiegare
-     printf("\n~~~~~~~~~~~~~~~Start!~~~~~~~~~~~~~~~\n");
-     printf("~~~~~~I processi 3 e 5 saranno Produttori~~~~~~~~\n");
-     printf("~~~~~~I processi 4 e 6 saranno Consumatori~~~~~~~~\n\n");
-  }
+   if (disastrOS_getpid() == 2) {           // per spiegare
+       printf("\n~~~~~~~~~~~~~~~Start!~~~~~~~~~~~~~~~\n");
+       printf("~~~~~~I processi 3 e 5 saranno Produttori~~~~~~~~\n");
+       printf("~~~~~~I processi 4 e 6 saranno Consumatori~~~~~~~~\n\n");
+    }
 
- if (disastrOS_getpid() == 3) {           //PRODUTTORE
-     producer_routine(prod_sem, cons_sem, mutex, &mq, disastrOS_getpid());
- }
+for(int i=0; i<ITERATIONS; i++){
 
- if (disastrOS_getpid() == 4){             //CONSUMATORE
-     consumer_routine(prod_sem, cons_sem, mutex, &mq, disastrOS_getpid());
- }
- if (disastrOS_getpid() == 5){          //PRODUTTORE
-     producer_routine(prod_sem, cons_sem, mutex, &mq, disastrOS_getpid());
- }
- if (disastrOS_getpid() == 6){            //CONSUMATORE
-     consumer_routine(prod_sem, cons_sem, mutex, &mq, disastrOS_getpid());
+   if (disastrOS_getpid() == 3) {           //PRODUTTORE
+       producer_routine(&mq, disastrOS_getpid(), i);
+   }
+
+   if (disastrOS_getpid() == 4){             //CONSUMATORE
+       consumer_routine(&mq, disastrOS_getpid(), i);
+   }
+   if (disastrOS_getpid() == 5){          //PRODUTTORE
+       producer_routine(&mq, disastrOS_getpid(), i);
+   }
+   if (disastrOS_getpid() == 6){            //CONSUMATORE
+       consumer_routine(&mq, disastrOS_getpid(), i);
+   }
  }
  printf("PID: %d, terminating\n", disastrOS_getpid());
-
 
 
 ////////////////////////////
@@ -116,10 +96,6 @@ int mutex = disastrOS_semopen(3,1);  //per garantire la mutua esclusione
 //    disastrOS_sleep((20-disastrOS_getpid())*5);
 //  }
 
-  printf("~~~~~~~~~~~~~~~Chiusura Semafori~~~~~~~~~~~~~~\n");
-  disastrOS_semclose(prod_sem);
-  disastrOS_semclose(cons_sem);
-  disastrOS_semclose(mutex);
   disastrOS_exit(disastrOS_getpid()+1);
 }
 
@@ -157,7 +133,8 @@ void initFunction(void* args) {
     printf("initFunction, child: %d terminated, retval:%d, alive: %d \n", pid, retval, alive_children);
     --alive_children;
   }
-  disastrOS_printStatus();  ///
+  disastrOS_printStatus();
+  FixedSizeMessageQueue_destroy(&mq);	///
   printf("shutdown!\n");
   disastrOS_shutdown();
 }
