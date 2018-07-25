@@ -24,11 +24,6 @@ void FixedSizeMessageQueue_init(FixedSizeMessageQueue* q,
   q->mutex = disastrOS_semopen(3,1);  //per garantire la mutua esclusione
 
 
-  srand(time(NULL));   // should only be called once
-
-
-
-
 }
 
 void FixedSizeMessageQueue_pushBack(FixedSizeMessageQueue*q,
